@@ -18,10 +18,10 @@ class WeatherController extends ApiController
     }
 
    
-    public function country(Request $request)
+    public function country()   
     {
-        $country = Municipalities::paginate(15);
-        return $this->SuccessResponse($country, 200);
+        $data = Municipalities::paginate(15);
+        return $this->SuccessResponse($data, 200);
 
     }
 }
