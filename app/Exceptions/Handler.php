@@ -2,8 +2,12 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -37,5 +41,37 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Throwable  $exception
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Throwable
+     */
+    public function render($request, Throwable $exception)
+    {
+        // return parent::render($request, $exception);
+    
+        if($exception instanceof ValidationException){
+            return response()->json($exception->validator->errors());
+        }
+
+        if($exception instanceof NotFoundHttpException){
+            return response()->json(["errors" => "The Specified URL Not found"], 404);
+        }
+
+        if($exception instanceof ModelNotFoundException){
+            return response()->json(["errors" => "The Specified ID Not found"], 404);
+        }
+
+        if($exception instanceof AuthorizationException){
+            return response()->json(["errors" => "The Specified token not found"], 403);
+        }
+
+        return response()->json(["errors" => "Internal Server Error"], 500);  
     }
 }
