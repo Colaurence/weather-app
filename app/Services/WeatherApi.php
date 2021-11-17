@@ -6,6 +6,6 @@ class WeatherApi
     
     public function getWeatherByCity($city){
       $weather = config('weather.api');
-      return Http::get('api.openweathermap.org/data/2.5/weather?q='.$city.'&appid='.$weather);
+      return Http::get('api.openweathermap.org/data/2.5/weather?q='.$city.'&appid='.$weather.'&units=metric');
     }
 }
